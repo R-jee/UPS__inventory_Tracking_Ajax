@@ -1,0 +1,49 @@
+<div class="order_tracking_page">
+  <div class="order_tracking_container">
+    <h2>Track Your Order</h2>
+    <div class="order_tracking-fields">
+
+      <input type="text" class="order_tracking_number" id="order_tracking_number_id" placeholder="Order Number">
+      <span class="error_TRACKING">No Tracking Record Found against this Order</span>
+      <a href="" target"_blank" id="order_tracking_number_btn_id" class="order_tracking_number_btn">Track Number</a>
+      <!--       <input type="button" id="order_tracking_number_btn_id" data-href="" class="order_tracking_number_btn" value="Track Number" />	 -->
+    </div>
+  </div>
+
+</div>
+<script>
+  $("#order_tracking_number_btn_id").on('click', function(e){
+        e.preventDefault();
+        var orderNO = $("#order_tracking_number_id").val();
+        $.ajax({
+          url : "https://autooutletllc.com/miniapp/public/vendors/trq_order", // Url of backend (can be python, php, etc..)
+          type: "POST", // data type (can be get, post, put, delete)
+          data : { po_number: orderNO }, // data in json format
+          async : false, // enable or disable async (optional, but suggested as false if you need to populate data afterwards)
+          success: function(response) {
+            // console.log(response);
+            $("#order_tracking_number_id").css('margin-bottom', '25px');
+            $(".error_TRACKING").css('display', 'none');
+            var resData = (response.tracking);
+            if(resData != ""){
+              var tracking__id___ = resData[0].trackingNumber;
+              // console.log(tracking__id___);
+              if( tracking__id___ != null ){
+                var track_href = "https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums="+ tracking__id___ +"&requester=ST/trackdetails";
+                window.open(track_href, '_blank');
+
+              }
+            }
+          },
+          error: function (request, status, error) {
+            // console.log(request.responseText);
+            // console.log(status);
+            // console.log(error);
+            $("#order_tracking_number_id").val("");
+            $("#order_tracking_number_id").css('margin-bottom', '2px');
+            $(".error_TRACKING").css('display', 'initial');
+          }
+
+        });
+      });
+</script>
